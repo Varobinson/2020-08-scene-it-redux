@@ -1,5 +1,7 @@
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, makeStyles, Typography } from '@material-ui/core'
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavorites, deleteFavorite } from '../redux/actions';
 
 const useClasses = makeStyles({
   root: {
@@ -22,9 +24,25 @@ const useClasses = makeStyles({
   }
 })
 
+
+
+
+
 export default function MovieCard(props) {
   const classes = useClasses();
   const { Title, Year, Poster } = props.movie;
+  const dispatch =useDispatch();
+  const movies = useSelector((state) => state.favorites)
+
+  const foundMovie = movies.find((movie)=> movie.imdbID === props.movie.imdbID)
+  
+  const handleAddMovie =()=>{
+    dispatch(addFavorites(props.movie))
+  }
+  const handleRemoveMovie =()=>{
+    dispatch(deleteFavorite(props.movie.imdbID))
+  }
+
 
   return (
     <Card  className={classes.root} >
@@ -36,7 +54,12 @@ export default function MovieCard(props) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button color="secondary" variant="contained">Add Movie</Button>
+        { foundMovie ?(
+        <Button  variant="contained" onClick={handleRemoveMovie}>Delete Movie</Button>
+        ):(
+          <Button color="secondary" variant="contained" onClick={handleAddMovie}>Add Movie</Button>
+        )
+      }
       </CardActions>
     </Card>
   )
